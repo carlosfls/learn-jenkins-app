@@ -31,10 +31,7 @@ pipeline {
             }
             steps {
                 sh '''
-                    echo Execute testing...
-                    echo 1-Verifiying if index.html exist
                     test -f public/index.html
-                    echo 2-Executing the test in the app
                     npm test
                 '''
             }

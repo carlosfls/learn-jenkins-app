@@ -1,4 +1,8 @@
 pipeline {
+    /*
+    Multiple lines comment
+    */
+    //single line comment
     agent any
 
     stages {
@@ -12,6 +16,7 @@ pipeline {
 
             steps {
                 sh '''
+                    #Comment in the shell
                     echo List all file before build
                     ls -la
                     node --version

@@ -1,8 +1,4 @@
 pipeline {
-    /*
-    Multiple lines comment
-    */
-    //single line comment
     agent any
 
     stages {
@@ -16,7 +12,6 @@ pipeline {
 
             steps {
                 sh '''
-                    #Comment in the shell
                     echo List all file before build
                     ls -la
                     node --version
@@ -28,34 +23,38 @@ pipeline {
             }
         }
         stage('Test'){
-            agent{
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true
+            parallel{
+                stage('Unit'){
+                    agent{
+                        docker{
+                            image 'node:18-alpine'
+                            reuseNode true
+                        }
+                    }
+                    steps{
+                        sh '''
+                            test -f public/index.html
+                            npm test
+                        '''
+                    }
                 }
-            }
-            steps {
-                sh '''
-                    test -f public/index.html
-                    npm test
-                '''
-            }
-        }
-        stage('E2E'){
-            agent{
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true
-                }
-            }
-            steps {
-                sh '''
-                    echo E2E test command
-                '''
-            }
-        }
-    }
 
+                stage('E2E'){
+                    agent{
+                        docker {
+                            image 'node:18-alpine'
+                            reuseNode true
+                        }
+                    }
+                    steps {
+                        sh '''
+                            echo E2E test command
+                        '''
+                    }
+                }
+            }
+        } 
+    }
     post {
         always {
             junit 'test-results/junit.xml'
